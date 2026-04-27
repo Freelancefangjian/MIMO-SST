@@ -1,6 +1,4 @@
-MIMO-SST (Multi-Input Multi-Output Spatial-Spectral Transformer) https://img.shields.io/badge/PyTorch-2.0.0+-red](https://pytorch.org/) https://img.shields.io/badge/Python-3.8+-blue]() https://img.shields.io/badge/License-MIT-green]() https://img.shields.io/badge/Paper-IEEE%20TGRS%202024-yellow](https://doi.org/10.1109/TGRS.2024.3361553)
-
-Official PyTorch Implementation for the Paper: https://arxiv.org/abs/xxxx.xxxxx
+MIMO-SST (Multi-Input Multi-Output Spatial-Spectral Transformer) 
 
 This project is an open-source code implementation for the task of Hyperspectral and Multispectral Image Fusion (HSI-MSI Fusion), corresponding to the paper "MIMO-SST: Multi-Input Multi-Output Spatial-Spectral Transformer for Hyperspectral and Multispectral Image Fusion" (IEEE TGRS 2024).
 
