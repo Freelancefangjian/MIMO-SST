@@ -1,164 +1,150 @@
-MIMO-SST (Multi-Input Multi-Output Spatial-Spectral Transformer)
+MIMO-SST (Multi-Input Multi-Output Spatial-Spectral Transformer) https://img.shields.io/badge/PyTorch-2.0.0+-red](https://pytorch.org/) https://img.shields.io/badge/Python-3.8+-blue]() https://img.shields.io/badge/License-MIT-green]() https://img.shields.io/badge/Paper-IEEE%20TGRS%202024-yellow](https://doi.org/10.1109/TGRS.2024.3361553)
 
-https://img.shields.io/badge/PyTorch-2.0.0+-red](https://pytorch.org/)
-https://img.shields.io/badge/Python-3.8+-blue]()
-https://img.shields.io/badge/License-MIT-green]()
-https://img.shields.io/badge/Paper-IEEE%20TGRS%202024-yellow](https://doi.org/10.1109/TGRS.2024.3361553)
+Official PyTorch Implementation for the Paper: https://arxiv.org/abs/xxxx.xxxxx
 
-官方 PyTorch 实现 论文 https://arxiv.org/abs/xxxx.xxxxx
- 
+This project is an open-source code implementation for the task of Hyperspectral and Multispectral Image Fusion (HSI-MSI Fusion), corresponding to the paper "MIMO-SST: Multi-Input Multi-Output Spatial-Spectral Transformer for Hyperspectral and Multispectral Image Fusion" (IEEE TGRS 2024).
 
-本项目是高光谱与多光谱图像融合（HSI-MSI Fusion）任务的开源代码实现，对应论文《MIMO-SST: Multi-Input Multi-Output Spatial-Spectral Transformer for Hyperspectral and Multispectral Image Fusion》（IEEE TGRS 2024）。
+📌 Project Introduction
 
-📌 项目简介
+This repository provides the PyTorch implementation of the MIMO-SST network. This network is a novel Multi-Input Multi-Output Spatial-Spectral Transformer architecture designed to address the Hyperspectral Image (HSI) super-resolution problem, i.e., fusing a Low-Resolution Hyperspectral Image (LR-HSI) and a High-Resolution Multispectral Image (HR-MSI) to generate a High-Resolution Hyperspectral Image (HR-HSI) with high spatial and spectral resolution.
 
-本仓库提供了 MIMO-SST 网络的 PyTorch 实现。该网络是一种新颖的多输入多输出空间-光谱Transformer架构，旨在解决高光谱图像（HSI）超分辨率问题，即融合低空间分辨率的高光谱图像（LR-HSI） 和高空间分辨率的多光谱图像（HR-MSI），以生成高空间-光谱分辨率的高光谱图像（HR-HSI）。
+Core Innovations:
+• Multi-Input Multi-Output (MIMO) Framework: Supervises the generation of HR-HSI at different scales through a coarse-to-fine architecture, thereby more comprehensively capturing image details and structures.
+• Mixture Spatial-Spectral Transformer (MTB):
+    ◦ Multi-head Feature Map Attention (MFMA): Mines spatial information.
+    ◦ Multi-head Feature Channel Attention (MFCA): Mines spectral information.
+    ◦ Multi-scale Convolutional Gated Feedforward Network (MCGFN): Effectively recovers local image structures through convolutions at different scales.
+• Wavelet-based High-Frequency (WHF) Loss Function: Integrated into the total loss to enhance the network's ability to express image edges and recover sharpened high-frequency details.
 
-核心创新点：
-• 多输入多输出（MIMO）框架：通过从粗到细的架构，在不同尺度上监督HR-HSI的生成，从而更全面地捕捉图像细节和结构。
+🎯 Main Results
 
-• 混合空间-光谱Transformer（Mixture Spatial-Spectral Transformer, MTB）：
+Experiments on three simulated datasets (CAVE, ICVL, Chikusei) and one real-world dataset (Hyperion-Sentinel-2) demonstrate that MIMO-SST surpasses existing state-of-the-art methods across multiple metrics (PSNR, RMSE, ERGAS, SAM, UIQI, SSIM).
 
-    ◦ 多头特征图注意力（MFMA）：挖掘空间信息。
+On the CAVE dataset (upsampling factor=8):
+• PSNR: 47.30 dB (approx. 0.85 dB improvement over the previous best method)
+• Faster inference speed, with fewer computations (FLOPs) and parameters.
 
-    ◦ 多头特征通道注意力（MFCA）：挖掘光谱信息。
+For details, please refer to Tables II-IV and XII in the paper.
 
-    ◦ 多尺度卷积门控前馈网络（MCGFN）：通过不同尺度的卷积有效恢复局部图像结构。
+🏗 Model Architecture
 
-• 小波高频（WHF）损失函数：集成到总损失中，以增强网络对图像边缘的表达能力，恢复锐化的高频细节。
+The overall network architecture is shown in the figure below (see Figure 2 in the paper for details):
 
-🎯 主要结果
-
-在三个模拟数据集（CAVE, ICVL, Chikusei）和一个真实数据集（Hyperion-Sentinel-2）上的实验表明，MIMO-SST 在多项指标上（PSNR, RMSE, ERGAS, SAM, UIQI, SSIM）超越了现有的先进方法。
-
-在CAVE数据集上（上采样因子=8）：
-• PSNR: 47.30 dB (比之前最佳方法提升约 0.85 dB)
-
-• 更快的推理速度，更少的计算量（FLOPs）和参数量。
-
-详情请参见论文中的表 II-IV 和 XII。
-
-🏗 模型架构
-
-网络整体架构如下图所示（详见论文图2）：
 <p align="center">
   <img src="docs/network_architecture.png" alt="MIMO-SST Architecture" width="800"/>
 </p>
 
-主要包括：
-1.  混合SST块（MTB）：核心模块，融合LR-HSI和HR-MSI的空间与光谱信息。
-2.  多输入编码器：处理不同下采样尺度的输入图像，提取多尺度特征。
-3.  多输出解码器：以从粗到细的方式生成多尺度的HR-HSI输出。
-4.  通道Transformer块（CTB）：在编码器和解码器中进一步挖掘光谱信息。
+It mainly includes:
+1. Mixture SST Block (MTB): The core module that fuses spatial and spectral information from LR-HSI and HR-MSI.
+2. Multi-input Encoder: Processes input images at different downsampled scales to extract multi-scale features.
+3. Multi-output Decoder: Generates multi-scale HR-HSI outputs in a coarse-to-fine manner.
+4. Channel Transformer Block (CTB): Further explores spectral information within the encoder and decoder.
 
-🚀 快速开始
+🚀 Quick Start
 
-1. 环境配置
-
+1. Environment Configuration
 • Python >= 3.8
+• PyTorch >= 2.0.0 (recommended 2.1.0)
+• CUDA >= 11.7 (for GPU training)
+• Other dependencies: numpy, scipy, tqdm, einops, pyyaml, tensorboard
 
-• PyTorch >= 2.0.0 (推荐 2.1.0)
+You can set up the environment with the following commands:
 
-• CUDA >= 11.7 (如需GPU训练)
+Clone this repository
 
-• 其他依赖库：numpy, scipy, tqdm, einops, pyyaml, tensorboard
-
-您可以通过以下命令安装环境：
-# 克隆本仓库
 git clone https://github.com/Freelancefangjian/MIMO-SST.git
 cd MIMO-SST
 
-# 创建并激活conda环境（可选）
+Create and activate a conda environment (optional)
+
 conda create -n mimo-sst python=3.8
 conda activate mimo-sst
 
-# 安装PyTorch (请根据您的CUDA版本调整)
+Install PyTorch (adjust according to your CUDA version)
+
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
-# 安装其他依赖
+Install other dependencies
+
 pip install -r requirements.txt
 
-
-2. 数据集准备
-
-我们使用三个公共数据集进行训练和评估：
+2. Dataset Preparation
+We use three public datasets for training and evaluation:
 • CAVE Dataset: http://www.cs.columbia.edu/CAVE/databases/multispectral/
-
 • ICVL Dataset: http://icvl.cs.bgu.ac.il/hyperspectral/
-
 • Chikusei Dataset: http://naotoyokoya.com/Download.html
 
-数据预处理：
-1.  将下载的数据集放入 ./datasets/ 目录下。
-2.  运行提供的预处理脚本，生成训练和测试所需的 .mat 或 .h5 文件。请参考 prepare_data/ 目录下的脚本，并按照其中的说明修改路径。
-    cd prepare_data
-    # 修改脚本中的数据集路径，然后运行
-    python prepare_cave.py
-    python prepare_icvl.py
-    python prepare_chikusei.py
-    
-3.  处理后的数据将包含LR-HSI、HR-MSI和对应的HR-HSI（Ground Truth）图像块。
+Data Preprocessing:
+1. Place the downloaded datasets into the ./datasets/ directory.
+2. Run the provided preprocessing scripts to generate the required .mat or .h5 files for training and testing. Please refer to the scripts in the prepare_data/ directory and modify the paths as instructed.
 
-3. 训练模型
+   cd prepare_data
+   # Modify the dataset paths in the scripts, then execute
+   python prepare_cave.py
+   python prepare_icvl.py
+   python prepare_chikusei.py
+   
+3. The processed data will contain image patches of LR-HSI, HR-MSI, and the corresponding HR-HSI (Ground Truth).
 
-配置文件位于 configs/ 目录。您可以根据需要修改超参数（如数据集路径、学习率、批大小等）。
+3. Training the Model
+Configuration files are located in the configs/ directory. You can modify hyperparameters (such as dataset paths, learning rate, batch size, etc.) as needed.
+• Training on the CAVE dataset (upsampling factor 8):
 
-• 在CAVE数据集上训练（上采样因子8）：
-    python train.py --config configs/train_cave_s8.yaml
-    
-• 训练过程支持TensorBoard日志记录。您可以使用以下命令监控训练进度：
-    tensorboard --logdir ./logs
-    
+  python train.py --config configs/train_cave_s8.yaml
+  
+• The training process supports TensorBoard logging. You can monitor training progress with:
 
-4. 测试与评估
+  tensorboard --logdir ./logs
+  
 
-训练完成后，使用测试脚本评估模型性能。
+4. Testing and Evaluation
+After training, use the test script to evaluate the model performance.
+• Test the model:
 
-• 测试模型：
-    python test.py --config configs/test_cave_s8.yaml --checkpoint ./checkpoints/best_model_cave_s8.pth
-    
-• 脚本将计算并输出PSNR, RMSE, ERGAS, SAM, UIQI, SSIM等指标，并可选保存融合结果图像。
+  python test.py --config configs/test_cave_s8.yaml --checkpoint ./checkpoints/best_model_cave_s8.pth
+  
+• The script will compute and output metrics such as PSNR, RMSE, ERGAS, SAM, UIQI, SSIM, and optionally save the fused result images.
 
-5. 使用预训练模型
+5. Using Pre-trained Models
+We provide a pre-trained model trained on the CAVE dataset (upsampling factor 8). You can download it from the https://github.com/Freelancefangjian/MIMO-SST/releases page, or use the following command (if uploaded):
 
-我们提供了在CAVE数据集（上采样因子8）上训练的预训练模型。您可以从 https://github.com/Freelancefangjian/MIMO-SST/releases 页面下载，或使用以下命令（如果已上传）：
-# 假设模型已通过git-lfs管理
+Assuming the model is managed via git-lfs
+
 git lfs pull
 
-然后，按照上述测试步骤加载预训练模型进行评估。
+Then, follow the testing steps above to load the pre-trained model for evaluation.
 
-📁 项目结构
-
+📁 Project Structure
 
 MIMO-SST/
-├── configs/               # 训练和测试的配置文件 (YAML格式)
-├── data/                  # 数据加载和处理模块
-├── models/                # MIMO-SST网络模型定义
-│   ├── mimo_sst.py       # 主网络架构
-│   ├── attention.py      # MFMA, MFCA 模块
-│   ├── feedforward.py    # MCGFN 模块
-│   └── blocks.py         # MTB, CTB 等基础块
-├── losses/                # 损失函数定义 (内容损失, WHF损失)
-├── trainers/              # 训练循环逻辑
-├── utils/                 # 工具函数 (指标计算, 日志记录, 可视化)
-├── prepare_data/          # 数据集预处理脚本
-├── train.py              # 主训练脚本
-├── test.py               # 主测试脚本
-├── requirements.txt      # Python依赖包列表
-└── README.md            # 本文件
+├── configs/             # Configuration files for training and testing (YAML format)
+├── data/                # Data loading and processing modules
+├── models/              # MIMO-SST network model definitions
+│   ├── mimo_sst.py     # Main network architecture
+│   ├── attention.py    # MFMA, MFCA modules
+│   ├── feedforward.py  # MCGFN module
+│   └── blocks.py       # MTB, CTB, and other basic blocks
+├── losses/             # Loss function definitions (content loss, WHF loss)
+├── trainers/            # Training loop logic
+├── utils/               # Utility functions (metric calculation, logging, visualization)
+├── prepare_data/       # Dataset preprocessing scripts
+├── train.py            # Main training script
+├── test.py             # Main testing script
+├── requirements.txt    # Python dependency list
+└── README.md           # This file
 
 
-📈 实验结果复现
+📈 Reproducing Experimental Results
+The main quantitative results in the paper can be reproduced by following these steps:
+1. Fully process the CAVE, ICVL, and Chikusei datasets as described in the "Dataset Preparation" section.
+2. Train models for different upsampling factors using the respective config files: configs/train_*_s8.yaml, *_s16.yaml, *_s32.yaml.
+3. Run test.py with the corresponding test configuration and the trained checkpoint.
+4. Run utils/evaluate_all.py (if provided) to batch compute and generate averaged results consistent with the paper's tables.
 
-论文中的主要定量结果可以通过以下步骤复现：
-1.  按照“数据集准备”部分完整处理CAVE、ICVL、Chikusei数据集。
-2.  分别使用 configs/train_*_s8.yaml, *_s16.yaml, *_s32.yaml 配置文件训练不同上采样因子的模型。
-3.  使用对应的测试配置和训练好的检查点运行 test.py。
-4.  运行 utils/evaluate_all.py（如果提供）可批量计算并生成与论文表格一致的均值结果。
+🤝 Citation
+If this project is helpful for your research, please cite our paper:
 
-🤝 引用
-
-如果本项目对您的研究有所帮助，请引用我们的论文：
+```bibtex
 @article{fang2024mimosst,
   title={{MIMO-SST}: Multi-Input Multi-Output Spatial-Spectral Transformer for Hyperspectral and Multispectral Image Fusion},
   author={Fang, Jian and Yang, Jingxiang and Khader, Abdolraheem and Xiao, Liang},
@@ -168,23 +154,18 @@ MIMO-SST/
   year={2024},
   doi={10.1109/TGRS.2024.3361553}
 }
+```
 
+📄 License
+This project is licensed under the MIT License. See the LICENSE file for details.
 
-📄 许可证
+🙏 Acknowledgements
+• Thanks to the providers of all public datasets (CAVE, ICVL, Chikusei).
+• This work was partially supported by the National Natural Science Foundation of China (Grants 61871226, 61571230, 62001226), among other projects.
 
-本项目采用 MIT 许可证。详情请见 LICENSE 文件。
+📮 Contact
+If you have any questions or suggestions, feel free to contact us via:
+• Author: Jian Fang (mailto:fangjian@njust.edu.cn)
+• Submit an issue at the GitHub repository: https://github.com/Freelancefangjian/MIMO-SST/issues.
 
-🙏 致谢
-
-• 感谢所有公共数据集（CAVE, ICVL, Chikusei）的提供者。
-
-• 本工作部分得到中国国家自然科学基金（Grants 61871226, 61571230, 62001226）等项目的资助。
-
-📮 联系
-
-如有任何问题或建议，欢迎通过以下方式联系：
-• 作者：Jian Fang (mailto:fangjian@njust.edu.cn)
-
-• 在GitHub仓库中提交 https://github.com/Freelancefangjian/MIMO-SST/issues。
-
-如果喜欢这个项目，请给我们一个Star！⭐
+Please give us a star if you like this project! ⭐
