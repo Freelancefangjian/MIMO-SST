@@ -29,7 +29,7 @@ For details, please refer to Tables II-IV and XII in the paper.
 The overall network architecture is shown in the figure below (see Figure 2 in the paper for details):
 
 <p align="center">
-  <img src="docs/network_architecture.png" alt="MIMO-SST Architecture" width="800"/>
+  <img src="./MIMO.png" alt="MIMO-SST Architecture" width="800"/>
 </p>
 
 It mainly includes:
